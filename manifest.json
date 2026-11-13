@@ -1,1 +1,10 @@
 
+{
+  "name": "PreisChecker",
+  "short_name": "PreisChecker",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#10131a",
+  "theme_color": "#10131a"
+}
+
