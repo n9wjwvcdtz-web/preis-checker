@@ -1,137 +1,528 @@
+
 <!doctype html>
 <html lang="de">
-  <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Preischecker — KI Preisvergleich</title>
-<link rel="preconnect" href__="https://fonts.googleapis.com" />
-<link rel="preconnect" href__="https://fonts.gstatic.com" crossorigin />
-<link href__="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-<style>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>PreisChecker – KI Preisvergleich</title>
+  <meta name="description" content="PreisChecker findet günstige Angebote und vergleicht Produktpreise.">
+  <meta name="theme-color" content="#10131a">
+
   <link rel="manifest" href="./manifest.json">
-  :root {
-    --paper: #f8f6f1;
-    --ink: #121614;
-    --muted: #6c736e;
-    --line: #e6e2d9;
-    --forest: #0f4a38;
-    --lime: #d7f171;
-    --font-display: 'Instrument Serif', Georgia, serif;
-    --font-head: 'Inter Tight', system-ui, sans-serif;
-    --font-body: 'Inter', system-ui, sans-serif;
-    --font-mono: 'JetBrains Mono', monospace;
-  }
-  * { box-sizing: border-box; }
-  body {
-    margin: 0; background: radial-gradient(130% 85% at 50% -15%, #fff 0%, #f8f6f1 45%, #f1eee7 100%);
-    color: var(--ink); font-family: var(--font-body); -webkit-font-smoothing: antialiased;
-  }
-  .wrap { max-width: 720px; margin: 0 auto; padding: 0 22px 90px; }
-  header { display: flex; justify-content: space-between; align-items: center; padding: 22px 0; }
-  .brand { display: flex; align-items: center; gap: 10px; font-family: var(--font-head); font-weight: 600; font-size: 15px; }
-  .mark { position: relative; width: 32px; height: 32px; border-radius: 11px; background: var(--forest); color: #fff;
-    display: grid; place-items: center; font-family: var(--font-head); font-size: 13px; }
-  .mark span { position: absolute; top: -4px; right: -4px; width: 10px; height: 10px; border-radius: 50%;
-    background: var(--lime); box-shadow: 0 0 0 2px var(--paper); }
-  .pill { display: flex; align-items: center; gap: 7px; border: 1px solid var(--line); background: rgba(255,255,255,.6);
-    border-radius: 999px; padding: 7px 12px; font-family: var(--font-mono); font-size: 9px; letter-spacing: .16em;
-    text-transform: uppercase; color: var(--muted); }
-  .dot { width: 6px; height: 6px; border-radius: 50%; background: #1fa97a; }
-  .hero { text-align: center; padding: 60px 0 10px; }
-  .eyebrow { font-family: var(--font-mono); font-size: 10px; letter-spacing: .28em; text-transform: uppercase; color: var(--muted); margin: 0; }
-  h1 { font-family: var(--font-display); font-weight: 400; font-size: clamp(2.6rem, 8vw, 4.2rem);
-    line-height: 1.02; letter-spacing: -.02em; margin: 18px 0 0; }
-  h1 em { font-style: italic; }
-  .sub { max-width: 30rem; margin: 16px auto 0; font-size: 15px; line-height: 1.65; color: var(--muted); }
-  .composer { position: relative; max-width: 36rem; margin: 34px auto 0; text-align: left; }
-  .box { border: 1px solid var(--line); background: #fff; border-radius: 28px; padding: 10px;
-    box-shadow: 0 26px 70px -46px rgba(20,35,28,.55); }
-  textarea { width: 100%; border: 0; outline: 0; resize: none; font-family: var(--font-body); font-size: 15px;
-    line-height: 1.6; padding: 10px 12px; background: transparent; color: var(--ink); }
-  textarea::placeholder { color: #9aa09b; }
-  .controls { display: flex; justify-content: space-between; align-items: center; }
-  .ghost { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--line); background: #fff; color: var(--muted);
-    display: grid; place-items: center; cursor: pointer; font-size: 18px; line-height: 1; transition: .2s; }
-  .ghost:hover { border-color: rgba(15,74,56,.3); color: var(--ink); }
-  .ghost.open { transform: rotate(45deg); }
-  .send { width: 40px; height: 40px; border-radius: 50%; border: 0; background: var(--forest); color: #fff;
-    cursor: pointer; font-size: 16px; }
-  .hint { font-family: var(--font-mono); font-size: 10px; letter-spacing: .14em; text-transform: uppercase;
-    color: var(--muted); margin-right: 12px; }
-  .right { display: flex; align-items: center; }
-  .menu { position: absolute; bottom: 100%; left: 0; margin-bottom: 8px; width: 235px; background: #fff;
-    border: 1px solid var(--line); border-radius: 16px; padding: 6px; box-shadow: 0 20px 40px -20px rgba(0,0,0,.25);
-    display: none; z-index: 5; }
-  .menu.show { display: block; }
-  .menu button { display: flex; gap: 10px; align-items: center; width: 100%; background: none; border: 0;
-    padding: 9px 10px; border-radius: 12px; cursor: pointer; text-align: left; font-family: var(--font-body); }
-  .menu button:hover { background: #f3f1ec; }
-  .menu strong { display: block; font-family: var(--font-head); font-size: 13px; font-weight: 500; }
-  .menu small { color: var(--muted); font-size: 11px; }
-  .chips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 20px; }
-  .chips button { border: 1px solid var(--line); background: rgba(255,255,255,.5); border-radius: 999px;
-    padding: 6px 12px; font-family: var(--font-body); font-size: 12px; color: #4a504c; cursor: pointer; }
-  .chips button:hover { background: #fff; color: var(--ink); }
-  .chips .label { font-family: var(--font-mono); font-size: 10px; letter-spacing: .16em; text-transform: uppercase;
-    color: #a6aba7; align-self: center; }
-  .section-head { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 46px; }
-  .kicker { font-family: var(--font-mono); font-size: 10px; letter-spacing: .24em; text-transform: uppercase;
-    color: var(--muted); margin: 0 0 8px; }
-  h2 { font-family: var(--font-head); font-size: 22px; font-weight: 600; letter-spacing: -.02em; margin: 0; }
-  .count { border: 1px solid var(--line); background: rgba(255,255,255,.7); border-radius: 999px;
-    padding: 5px 11px; font-size: 11px; color: var(--muted); }
-  .card { display: flex; justify-content: space-between; gap: 16px; border: 1px solid var(--line); background: #fff;
-    border-radius: 24px; padding: 16px 18px; margin-top: 12px; }
-  .card.win { border-color: rgba(15,74,56,.2); box-shadow: 0 24px 60px -40px rgba(15,74,56,.6); }
-  .row { display: flex; gap: 14px; }
-  .rank { font-family: var(--font-display); font-size: 18px; color: #c9c6bd; line-height: 1; margin-top: 3px; }
-  .plat { font-family: var(--font-mono); font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
-  .tag { display: inline-block; margin-left: 8px; background: var(--lime); color: #14231a; border-radius: 999px;
-    padding: 2px 8px; font-family: var(--font-mono); font-size: 9px; letter-spacing: .1em; text-transform: uppercase; }
-  .title { font-family: var(--font-head); font-size: 15px; font-weight: 500; margin: 4px 0 2px; }
-  .meta { font-size: 12px; color: var(--muted); }
-  .note { font-size: 13px; color: #555c57; line-height: 1.55; margin: 8px 0 0; max-width: 26rem; }
-  .price { font-family: var(--font-head); font-size: 18px; font-weight: 600; white-space: nowrap; }
-  .price small { display: block; font-family: var(--font-body); font-size: 11px; font-weight: 400; color: var(--muted); margin-top: 6px; text-align: right; }
-  .foot { font-size: 11px; color: var(--muted); line-height: 1.6; margin-top: 18px; }
-  @media (max-width: 520px) { .rank, .note { display: none; } }
-</style>
-<style>
-.logo {
-  width: 180px;
-  height: auto;
-  display: block;
-  object-fit: contain;
-}
-</style>
-  </head>
+  <link rel="icon" href="./icon-192.png" type="image/png">
+  <link rel="apple-touch-icon" href="./icon-192.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --paper: #f8f6f1;
+      --ink: #121614;
+      --muted: #6c736e;
+      --line: #e6e2d9;
+      --forest: #0f4a38;
+      --lime: #d7f171;
+      --font-display: 'Instrument Serif', Georgia, serif;
+      --font-head: 'Inter Tight', system-ui, sans-serif;
+      --font-body: 'Inter', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: radial-gradient(130% 85% at 50% -15%, #fff 0%, #f8f6f1 45%, #f1eee7 100%);
+      color: var(--ink);
+      font-family: var(--font-body);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button, textarea {
+      font: inherit;
+    }
+
+    button {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 22px 90px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 22px 0;
+      gap: 12px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-head);
+      font-weight: 600;
+      font-size: 15px;
+    }
+
+    .logo {
+      width: 180px;
+      max-width: 45vw;
+      height: auto;
+      display: block;
+      object-fit: contain;
+    }
+
+    .pill {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.6);
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #1fa97a;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 60px 0 10px;
+    }
+
+    .eyebrow {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: .28em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin: 0;
+    }
+
+    h1 {
+      font-family: var(--font-display);
+      font-weight: 400;
+      font-size: clamp(2.6rem, 8vw, 4.2rem);
+      line-height: 1.02;
+      letter-spacing: -.02em;
+      margin: 18px 0 0;
+    }
+
+    h1 em {
+      font-style: italic;
+    }
+
+    .sub {
+      max-width: 30rem;
+      margin: 16px auto 0;
+      font-size: 15px;
+      line-height: 1.65;
+      color: var(--muted);
+    }
+
+    .composer {
+      position: relative;
+      max-width: 36rem;
+      margin: 34px auto 0;
+      text-align: left;
+    }
+
+    .box {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 28px;
+      padding: 10px;
+      box-shadow: 0 26px 70px -46px rgba(20,35,28,.55);
+    }
+
+    textarea {
+      width: 100%;
+      border: 0;
+      outline: 0;
+      resize: none;
+      font-family: var(--font-body);
+      font-size: 15px;
+      line-height: 1.6;
+      padding: 10px 12px;
+      background: transparent;
+      color: var(--ink);
+    }
+
+    textarea::placeholder {
+      color: #9aa09b;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .ghost {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--muted);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      font-size: 18px;
+      line-height: 1;
+      transition: .2s;
+    }
+
+    .ghost:hover {
+      border-color: rgba(15,74,56,.3);
+      color: var(--ink);
+    }
+
+    .ghost.open {
+      transform: rotate(45deg);
+    }
+
+    .send {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 0;
+      background: var(--forest);
+      color: #fff;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .send:hover {
+      background: #17654b;
+    }
+
+    .hint {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-right: 12px;
+    }
+
+    .right {
+      display: flex;
+      align-items: center;
+    }
+
+    .menu {
+      position: absolute;
+      bottom: 100%;
+      left: 0;
+      margin-bottom: 8px;
+      width: 235px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 6px;
+      box-shadow: 0 20px 40px -20px rgba(0,0,0,.25);
+      display: none;
+      z-index: 5;
+    }
+
+    .menu.show {
+      display: block;
+    }
+
+    .menu button {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      width: 100%;
+      background: none;
+      border: 0;
+      padding: 9px 10px;
+      border-radius: 12px;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .menu button:hover {
+      background: #f3f1ec;
+    }
+
+    .menu strong {
+      display: block;
+      font-family: var(--font-head);
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .menu small {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .chips button {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.5);
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 12px;
+      color: #4a504c;
+      cursor: pointer;
+    }
+
+    .chips button:hover {
+      background: #fff;
+      color: var(--ink);
+    }
+
+    .chips .label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: #a6aba7;
+      align-self: center;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-top: 46px;
+      gap: 12px;
+    }
+
+    .kicker {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: .24em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin: 0 0 8px;
+    }
+
+    h2 {
+      font-family: var(--font-head);
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: -.02em;
+      margin: 0;
+    }
+
+    .count {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.7);
+      border-radius: 999px;
+      padding: 5px 11px;
+      font-size: 11px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .card {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 24px;
+      padding: 16px 18px;
+      margin-top: 12px;
+    }
+
+    .card.win {
+      border-color: rgba(15,74,56,.2);
+      box-shadow: 0 24px 60px -40px rgba(15,74,56,.6);
+    }
+
+    .row {
+      display: flex;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .rank {
+      font-family: var(--font-display);
+      font-size: 18px;
+      color: #c9c6bd;
+      line-height: 1;
+      margin-top: 3px;
+    }
+
+    .plat {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .tag {
+      display: inline-block;
+      margin-left: 8px;
+      background: var(--lime);
+      color: #14231a;
+      border-radius: 999px;
+      padding: 2px 8px;
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    .title {
+      font-family: var(--font-head);
+      font-size: 15px;
+      font-weight: 500;
+      margin: 4px 0 2px;
+    }
+
+    .meta {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .note {
+      font-size: 13px;
+      color: #555c57;
+      line-height: 1.55;
+      margin: 8px 0 0;
+      max-width: 26rem;
+    }
+
+    .price {
+      font-family: var(--font-head);
+      font-size: 18px;
+      font-weight: 600;
+      white-space: nowrap;
+      align-self: center;
+    }
+
+    .price small {
+      display: block;
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 400;
+      color: var(--muted);
+      margin-top: 6px;
+      text-align: right;
+    }
+
+    .foot {
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-top: 18px;
+    }
+
+    @media (max-width: 520px) {
+      .wrap {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      .hero {
+        padding-top: 42px;
+      }
+
+      .rank, .note {
+        display: none;
+      }
+
+      .card {
+        padding: 14px;
+        gap: 8px;
+      }
+
+      .price {
+        font-size: 16px;
+      }
+
+      .hint {
+        font-size: 9px;
+        letter-spacing: .06em;
+      }
+    }
+  </style>
+</head>
+
 <body>
   <div class="wrap">
+
     <header>
-  <div class="brand">
-    <img src="logo.png" alt="PreisChecker Logo" class="logo">
-  </div>
-  <div class="pill"><span class="dot"></span> KI-Live-Suche</div>
-</header>
+      <div class="brand">
+        <img src="./logo.png" alt="PreisChecker Logo" class="logo">
+      </div>
+      <div class="pill">
+        <span class="dot"></span>
+        KI-Live-Suche
+      </div>
+    </header>
 
     <section class="hero">
       <p class="eyebrow">Preisvergleich · KI-gestützt</p>
+
       <h1>Was kostet es <em>wirklich</em>?</h1>
-      <p class="sub">Tippe ein Produkt ein oder lade ein Foto hoch — wir durchsuchen Marktplätze, Händler und
-        Kleinanzeigen und zeigen dir den günstigsten Preis und die beste Wahl.</p>
+
+      <p class="sub">
+        Tippe ein Produkt ein oder lade ein Foto hoch – wir durchsuchen
+        Marktplätze, Händler und Kleinanzeigen und zeigen dir den
+        günstigsten Preis und die beste Wahl.
+      </p>
 
       <div class="composer">
         <div class="menu" id="menu">
-          <button type="button" onclick="pick('Datei anhängen')">📎 <span><strong>Datei anhängen</strong><small>PDF, Foto, Text</small></span></button>
-          <button type="button" onclick="pick('Bild hochladen')">🖼️ <span><strong>Bild hochladen</strong><small>Produktfoto</small></span></button>
-          <button type="button" onclick="pick('Kamera')">📷 <span><strong>Kamera</strong><small>Sofort fotografieren</small></span></button>
+          <button type="button" onclick="pick('Datei anhängen')">
+            📎 <span><strong>Datei anhängen</strong><small>PDF, Foto, Text</small></span>
+          </button>
+
+          <button type="button" onclick="pick('Bild hochladen')">
+            🖼️ <span><strong>Bild hochladen</strong><small>Produktfoto</small></span>
+          </button>
+
+          <button type="button" onclick="pick('Kamera')">
+            📷 <span><strong>Kamera</strong><small>Sofort fotografieren</small></span>
+          </button>
         </div>
+
         <div class="box">
-          <textarea id="q" rows="1" placeholder="Produkt eintippen — z. B. BMW M5 E60, iPhone 15 Pro, Rolex Submariner …"></textarea>
+          <textarea id="q" rows="1" placeholder="Produkt eintippen – z. B. BMW M5 E60, iPhone 15 Pro, Rolex Submariner …"></textarea>
+
           <div class="controls">
             <button class="ghost" id="plus" type="button" aria-label="Anhang hinzufügen" onclick="toggleMenu()">+</button>
-            <div class="right"><span class="hint" id="hint">Enter zum Suchen</span>
-              <button class="send" type="button" onclick="submitSearch()">↑</button></div>
+
+            <div class="right">
+              <span class="hint" id="hint">Enter zum Suchen</span>
+              <button class="send" type="button" onclick="submitSearch()" aria-label="Suchen">↑</button>
+            </div>
           </div>
         </div>
       </div>
@@ -204,48 +595,81 @@
         <div class="price">14.900 €<small>Ansehen ↗</small></div>
       </div>
 
-      <p class="foot">Diese Datei zeigt das Design als eigenständige Seite. Die echte Live-Suche mit KI läuft in der
-        Preischecker-App selbst.</p>
+      <p class="foot">
+        Beispielangebote zur Darstellung des Designs. Keine garantierten
+        aktuellen Marktpreise. Die echte Live-Suche muss separat mit einer
+        Such-API oder einem Backend verbunden werden.
+      </p>
     </section>
   </div>
 
   <script>
-    var field = document.getElementById('q');
-    var menu = document.getElementById('menu');
-    var plus = document.getElementById('plus');
-    var hint = document.getElementById('hint');
+    const field = document.getElementById('q');
+    const menu = document.getElementById('menu');
+    const plus = document.getElementById('plus');
+    const hint = document.getElementById('hint');
 
-    function toggleMenu() { menu.classList.toggle('show'); plus.classList.toggle('open'); }
-    function setQ(value) { field.value = value; field.focus(); }
+    function toggleMenu() {
+      menu.classList.toggle('show');
+      plus.classList.toggle('open');
+    }
+
+    function setQ(value) {
+      field.value = value;
+      field.focus();
+    }
+
     function pick(label) {
       toggleMenu();
       hint.textContent = label + ' gewählt';
-      setTimeout(function () { hint.textContent = 'Enter zum Suchen'; }, 2200);
+      setTimeout(() => {
+        hint.textContent = 'Enter zum Suchen';
+      }, 2200);
     }
+
     function submitSearch() {
-      if (!field.value.trim()) { field.focus(); return; }
+      if (!field.value.trim()) {
+        field.focus();
+        return;
+      }
+
       hint.textContent = 'Suche läuft …';
-      setTimeout(function () { hint.textContent = 'Enter zum Suchen'; }, 2200);
+
+      // Hier wird später die echte KI-Produktsuche angeschlossen.
+      setTimeout(() => {
+        hint.textContent = 'Enter zum Suchen';
+      }, 2200);
     }
-    field.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submitSearch(); }
+
+    field.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        submitSearch();
+      }
     });
-    field.addEventListener('input', function () {
+
+    field.addEventListener('input', function() {
       field.style.height = 'auto';
       field.style.height = Math.min(field.scrollHeight, 160) + 'px';
     });
-    document.addEventListener('click', function (e) {
-      if (!menu.contains(e.target) && e.target !== plus) { menu.classList.remove('show'); plus.classList.remove('open'); }
+
+    document.addEventListener('click', function(e) {
+      if (!menu.contains(e.target) && e.target !== plus) {
+        menu.classList.remove('show');
+        plus.classList.remove('open');
+      }
     });
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', async () => {
+        try {
+          await navigator.serviceWorker.register('./service-worker.js');
+          console.log('PreisChecker Service Worker erfolgreich registriert.');
+        } catch (error) {
+          console.error('Service Worker konnte nicht registriert werden:', error);
+        }
+      });
+    }
   </script>
-
-<script>
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./service-worker.js");
-  });
-}
-</script>
-
 </body>
 </html>
