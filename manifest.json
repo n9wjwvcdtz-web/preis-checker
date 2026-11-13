@@ -3,8 +3,8 @@
   "name": "PreisChecker",
   "short_name": "PreisChecker",
   "start_url": "./",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#10131a",
   "theme_color": "#10131a"
 }
-
